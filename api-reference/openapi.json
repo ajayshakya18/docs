@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "https://app.thareja.ai"
     }
   ],
   "security": [
@@ -19,83 +19,6 @@
     }
   ],
   "paths": {
-    "/plants": {
-      "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/plants/{id}": {
       "delete": {
         "description": "Deletes a single plant based on the ID supplied",
@@ -124,6 +47,58 @@
                   "$ref": "#/components/schemas/Error"
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/team/getTeams": {
+      "get": {
+        "description": "Returns all the teams of the user has access.",
+        "responses": {
+          "200": {
+            "description": "Team list response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/task/create": {
+      "post": {
+        "description": "Creates a new task in the project",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewTask"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "New task response",
+            "content": {
+              "application/json": {}
+            }
+          },
+          "400": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {}
             }
           }
         }
@@ -170,25 +145,58 @@
           }
         }
       },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
+      "NewTask": {
+        "required": [
+          "project_id",
+          "task_name"
+        ],
+        "type": "object",
+        "properties": {
+          "task_name": {
+            "description": "The name of the task",
+            "type": "string"
+            
           },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
+          "project_id": {
+            "description": "The ID of the project this task belongs to",
+            "type": "integer",
+            "format": "int64",
+            "example": 123
+          },
+         
+          "description": {
+            "description": "Detailed description of the task",
+            "type": "string",
+            "example": "Write comprehensive documentation for all API endpoints"
+          },
+          "due_date": {
+            "description": "The due date for the task in UTC",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-12-31T23:59:59Z"
+          },
+         
+          "assignee": {
+            "description": "User ID of the person assigned to this task. Defaults to the logged-in user's ID if not provided.",
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "priority": {
+            "description": "Priority level of the task, You can get priority list using priority api if you not set it will add default 3 means Medium",
+            "type": "integer",
+            "format": "int64",
+            "example": 1,
+            "default": 3
+          },
+          "sprintIds": {
+            "description": "Sprint id in array if you want to create this task under in sprint",
+            "type": "array",
+            "format": "int64",
+            "example": [1,2]
           }
-        ]
+         
+        }
       },
       "Error": {
         "required": [
