@@ -1,0 +1,55 @@
+---
+title: 'Update Task Assignee'
+openapi: 'POST /api/taskmanager/v1/task/updateAssignee/{taskId}'
+---
+
+## Overview
+
+Update the assignee of a specific task. This endpoint allows you to reassign tasks to different team members or unassign tasks.
+
+## Path Parameters
+
+<ParamField path="taskId" type="integer" required>
+  The unique identifier of the task to update the assignee for.
+  
+  **Example:** `456`
+</ParamField>
+
+## Request Body
+
+<ParamField body="assignee" type="integer" required>
+  User ID of the person to assign this task to. Set to `null` to unassign the task.
+  
+  **Example:** `5`
+</ParamField>
+
+<ParamField body="comment" type="string">
+  Optional comment to include in the assignment notification.
+  
+  **Example:** `"This task is high priority. Please review by EOD."`
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="integer">
+  The unique identifier of the task.
+</ResponseField>
+
+<ResponseField name="task_name" type="string">
+  The name of the task.
+</ResponseField>
+
+<ResponseField name="project_id" type="integer">
+  The ID of the project this task belongs to.
+</ResponseField>
+
+<ResponseField name="assignee" type="integer">
+  User ID of the person now assigned to this task.
+</ResponseField>
+
+<ResponseField name="updated_at" type="string">
+  The timestamp when the assignee was updated (ISO 8601 format).
+</ResponseField>
+
+## Example Request
+```bash

@@ -3,3 +3,156 @@ title: 'Create Task'
 openapi: 'POST /api/v3/task/create'
 ---
 
+## Overview
+
+Create a new task within a project. Tasks can be assigned to team members, given priorities, and organized into sprints.
+
+## Request Body
+
+<ParamField body="task_name" type="string" required>
+  The name of the task.
+  
+  **Example:** `"Implement login feature"`
+</ParamField>
+
+<ParamField body="project_id" type="integer" required>
+  The ID of the project this task belongs to.
+  
+  **Example:** `123`
+</ParamField>
+
+<ParamField body="description" type="string">
+  Detailed description of the task.
+  
+  **Example:** `"Write comprehensive documentation for all API endpoints"`
+</ParamField>
+
+<ParamField body="due_date" type="string">
+  The due date for the task in UTC (ISO 8601 format).
+  
+  **Example:** `"2025-12-31T23:59:59Z"`
+</ParamField>
+
+<ParamField body="assignee" type="integer">
+  User ID of the person assigned to this task. If not provided, defaults to the logged-in user's ID.
+  
+  **Example:** `1`
+</ParamField>
+
+<ParamField body="priority" type="integer" default="3">
+  Priority level of the task. You can get the priority list using the priority API. 
+  
+  **Default:** `3` (Medium)
+  
+  **Example:** `1`
+</ParamField>
+
+<ParamField body="sprintIds" type="array">
+  Array of sprint IDs if you want to create this task under specific sprints.
+  
+  **Example:** `[1, 2]`
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="integer">
+  The unique identifier for the newly created task.
+</ResponseField>
+
+<ResponseField name="task_name" type="string">
+  The name of the task.
+</ResponseField>
+
+<ResponseField name="project_id" type="integer">
+  The ID of the project this task belongs to.
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Detailed description of the task.
+</ResponseField>
+
+<ResponseField name="due_date" type="string">
+  The due date for the task in UTC.
+</ResponseField>
+
+<ResponseField name="assignee" type="integer">
+  User ID of the person assigned to this task.
+</ResponseField>
+
+<ResponseField name="priority" type="integer">
+  Priority level of the task.
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  The timestamp when the task was created (ISO 8601 format).
+</ResponseField>
+
+## Example Request
+```bash
+curl --request POST \
+  --url https://app.thareja.ai/api/v3/task/create \
+  --header 'Authorization: Bearer YOUR_API_TOKEN' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "task_name": "Implement login feature",
+    "project_id": 123,
+    "description": "Write comprehensive documentation for all API endpoints",
+    "due_date": "2025-12-31T23:59:59Z",
+    "assignee": 1,
+    "priority": 1,
+    "sprintIds": [1, 2]
+  }'
+```
+
+## Example Response
+```json
+{
+  "id": 456,
+  "task_name": "Implement login feature",
+  "project_id": 123,
+  "description": "Write comprehensive documentation for all API endpoints",
+  "due_date": "2025-12-31T23:59:59Z",
+  "assignee": 1,
+  "priority": 1,
+  "sprint_ids": [1, 2],
+  "created_at": "2025-11-28T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseExample>
+```json 400 Bad Request - Missing Required Fields
+{
+  "error": 400,
+  "message": "task_name and project_id are required"
+}
+```
+```json 400 Bad Request - Invalid Project
+{
+  "error": 400,
+  "message": "Project with ID 123 does not exist"
+}
+```
+```json 401 Unauthorized
+{
+  "error": 401,
+  "message": "Invalid or missing authentication token"
+}
+```
+```json 404 Not Found
+{
+  "error": 404,
+  "message": "Assignee user not found"
+}
+```
+</ResponseExample>
+
+## Notes
+
+- **Required fields:** `task_name` and `project_id` must be provided
+- **Default assignee:** If no assignee is specified, the task will be assigned to the logged-in user
+- **Default priority:** If no priority is specified, it defaults to 3 (Medium)
+- **Sprint assignment:** Tasks can be assigned to multiple sprints simultaneously
+- **Priority levels:** Use the priority API endpoint to get the complete list of available priority levels
+- **Date format:** All dates should be in ISO 8601 format (UTC timezone)

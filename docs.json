@@ -10,39 +10,96 @@
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
-     
       {
         "tab": "API reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Time tracking API reference",
             "pages": [
-              "api-reference/introduction"
+              {
+                "group": "Team Management",
+                "pages": [
+                  "api-reference/team/create",
+                  "api-reference/team/list"
+                ]
+              },
+              {
+                "group":"Task Management",
+                "pages": [
+    
+                  {
+                    "group": "Tasks",
+                    "pages": [
+                      "api-reference/task/create",
+                      "api-reference/task/updateassignee"
+                    ]
+                  },
+                  {
+                    "group": "Projects",
+                    "pages": [
+                      "api-reference/project/create"
+                      
+
+                    ]
+                  },
+                  {
+                    "group": "Task Comments",
+                    "pages": [
+                      "api-reference/task/comment/add",
+                      "api-reference/task/comment/list"
+                    ]
+                  }
+                  
+                ]
+    
+              },
+              {
+                "group":"People",
+                "pages": [
+                  {
+                    "group": "Member",
+                    "pages": [
+                     
+                      "api-reference/team/sendInvitation"
+                    ]
+                  },
+                  {
+                    "group": "Client",
+                    "pages": [
+                      "api-reference/client/create"
+                   
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Time management",
+                "pages": [
+                  
+                  {
+                    "group":"Schedule",
+                    "pages": [
+                      "api-reference/timemanagement/schedule/create",
+                      "api-reference/timemanagement/schedule/delete"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Meeting",
+                "pages": [
+                  "api-reference/meeting/add"
+                 
+                ]
+              }
               
             ]
-          },
-          {
-            "group": "Teams",
-            "pages": [
-              "api-reference/team/list"
-      
-            ]
-          },
-          {
-            "group": "Tasks",
-            "pages": [
-              "api-reference/task/create"
-            ]
-          },
-          {
-            "group": "Endpoint examples",
-            "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
-            ]
           }
+          
+          
+          
+          
+          
         ]
       }
     ],
@@ -53,7 +110,6 @@
           "href": "https://mintlify.com/docs",
           "icon": "book-open-cover"
         }
-       
       ]
     }
   },
@@ -76,15 +132,15 @@
   },
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "footer": {
     "socials": {

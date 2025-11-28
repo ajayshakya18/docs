@@ -1,0 +1,236 @@
+---
+title: 'Send Team Invitation'
+openapi: 'POST /api/v3/mobile/invitation/sendInvitation'
+---
+
+## Overview
+
+Send an invitation to a user to join a team. This endpoint allows team owners and managers to invite new members, set their roles, and configure payment and time tracking settings.
+
+## Request Body
+
+<ParamField body="team_id" type="integer" required>
+  The ID of the team to invite the user to.
+  
+  **Example:** `1`
+</ParamField>
+
+<ParamField body="email" type="string" required>
+  The email address of the user to invite.
+  
+  **Example:** `"john.doe@example.com"`
+</ParamField>
+
+<ParamField body="role" type="string" required>
+  The role to assign to the invited user.
+  
+  **Allowed values:** `"owner"`, `"manager"`, `"member"`
+  
+  **Example:** `"member"`
+</ParamField>
+
+<ParamField body="job_title" type="string" required>
+  The job title for the invited user.
+  
+  **Example:** `"Senior Developer"`
+</ParamField>
+
+<ParamField body="pay_rate" type="number">
+  The pay rate for the user. Interpretation depends on `pay_type`.
+  - If `pay_type` is `"hourly"`: hourly rate
+  - If `pay_type` is `"fixed"`: fixed amount per pay period
+  
+  **Example:** `50.00`
+</ParamField>
+
+<ParamField body="bill_rate" type="number" >
+  The billable rate for the user (hourly rate charged to clients).
+  
+  **Example:** `75.00`
+</ParamField>
+
+<ParamField body="weekly_limit" type="number">
+  Maximum hours per week the user can work.
+  
+  **Example:** `40`
+</ParamField>
+
+<ParamField body="pay_type" type="string" default="hourly">
+  Type of payment structure.
+  
+  **Allowed values:** `"hourly"`, `"fixed"`
+  
+  **Default:** `"hourly"`
+  
+  **Example:** `"hourly"`
+</ParamField>
+
+<ParamField body="pay_period" type="string" default="weekly">
+  Frequency of payment.
+  
+  **Allowed values:** `"weekly"`, `"bi-weekly"`, `"twice per month"`, `"monthly"`
+  
+  **Default:** `"weekly"`
+  
+  **Example:** `"weekly"`
+</ParamField>
+
+<ParamField body="ip" type="string">
+  IP address of the inviter (for audit trail).
+  
+  **Example:** `"192.168.1.1"`
+</ParamField>
+
+<ParamField body="agent" type="string">
+  User agent string of the inviter (for audit trail).
+  
+  **Example:** `"Mozilla/5.0..."`
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="string">
+  Success message confirming the invitation was sent.
+</ResponseField>
+
+## Example Request
+```bash
+curl --request POST \
+  --url https://staging.thareja.org/api/v3/team/sendInvitation \
+  --header 'Authorization: Bearer YOUR_API_TOKEN' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "team_id": 1,
+    "email": "john.doe@example.com",
+    "role": "member",
+    "job_title": "Senior Developer",
+    "pay_rate": 50.00,
+    "bill_rate": 75.00,
+    "weekly_limit": 40,
+    "pay_type": "hourly",
+    "pay_period": "weekly"
+  }'
+```
+
+## Example Request (JavaScript)
+```javascript
+fetch('https://staging.thareja.org/api/v3/team/sendInvitation', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_TOKEN',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    team_id: 1,
+    email: "john.doe@example.com",
+    role: "member",
+    job_title: "Senior Developer",
+    pay_rate: 50.00,
+    bill_rate: 75.00,
+    weekly_limit: 40,
+    pay_type: "hourly",
+    pay_period: "weekly"
+  })
+})
+.then(response => response.json())
+.then(data => console.log(data));
+```
+
+## Example Response
+```json
+{
+  "success": "invitation sent successfully"
+}
+```
+
+
+## Example Request - Fixed Pay Type
+
+For monthly fixed salary:
+```bash
+curl --request POST \
+  --url https://staging.thareja.org/api/v3/team/sendInvitation \
+  --header 'Authorization: Bearer YOUR_API_TOKEN' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "team_id": 1,
+    "email": "jane.smith@example.com",
+    "role": "member",
+    "job_title": "Project Manager",
+    "pay_rate": 8000.00,
+    "bill_rate": 100.00,
+    "weekly_limit": 40,
+    "pay_type": "fixed",
+    "pay_period": "monthly"
+  }'
+```
+
+## Error Responses
+
+<ResponseExample>
+```json 403 Forbidden - Missing Team ID
+{
+  "error": "team_id missing"
+}
+```
+```json 403 Forbidden - Permission Denied
+{
+  "error": "permission denied"
+}
+```
+```json 401 Unauthorized
+{
+  "error": 401,
+  "message": "Invalid or missing authentication token"
+}
+```
+```json 404 Not Found - Team Not Found
+{
+  "error": 404,
+  "message": "Team not found"
+}
+```
+```json 400 Bad Request - Invalid Email
+{
+  "error": 400,
+  "message": "Invalid email address"
+}
+```
+```json 400 Bad Request - Invalid Role
+{
+  "error": 400,
+  "message": "Invalid role specified"
+}
+```
+</ResponseExample>
+
+## Pay Rate Calculations
+
+When `pay_type` is `"fixed"`, the system automatically calculates an hourly rate based on the pay period:
+
+- **Weekly**: `hourly_rate = pay_rate / 40`
+- **Bi-weekly**: `hourly_rate = pay_rate / 80`
+- **Twice per month**: `hourly_rate = pay_rate / 80`
+- **Monthly**: `hourly_rate = pay_rate / 160`
+
+This hourly rate is used for time tracking and reporting purposes.
+
+## Notes
+
+- **Permissions required**: Only team owners and managers can send invitations
+- **Team features**: The invitation process depends on your team's feature settings (sends email invitations or adds members directly)
+- **Currency**: Default currency is USD for all payment calculations
+- **Time tracking**: Weekly limits and allowed working days are automatically configured for the invited user
+- **Pending status**: Invitations are created with "pending" status until the user accepts
+- **Terms agreement**: If your workspace has terms and conditions, they are automatically accepted on behalf of the inviter
+- **Audit trail**: IP address and user agent can be provided for security and audit purposes
+- **Payment configuration**: Payment settings include pay rate, bill rate, pay type, and pay period
+- **Time tracking limits**: Weekly limits and daily tracking preferences are configured automatically
+- **Default working days**: All days (Sunday-Saturday) are enabled by default
+
+## Related Endpoints
+
+- [Get Team Invitations](/api-reference/team/invitations/list) - List pending invitations
+- [Cancel Invitation](/api-reference/team/invitations/cancel) - Cancel a pending invitation
+- [Resend Invitation](/api-reference/team/invitations/resend) - Resend invitation email
+- [Get Team Members](/api-reference/team/members/list) - List all team members

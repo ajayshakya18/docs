@@ -1,0 +1,51 @@
+---
+title: 'Delete Schedule'
+openapi: 'POST /api/v1/timemanagement/schedule/delete'
+---
+
+## Overview
+
+Delete work schedules. You can delete a single schedule occurrence or all future occurrences of a recurring schedule. Only team owners and managers can delete schedules.
+
+## Request Body
+
+<ParamField body="id" type="integer" required>
+  The unique identifier of the schedule to delete.
+  
+  **Example:** `123`
+</ParamField>
+
+<ParamField body="type" type="string" required>
+  Type of deletion to perform.
+  
+  **Allowed values:**
+  - `"this"` - Delete only this specific schedule occurrence
+  - `"future"` - Delete this and all future occurrences
+  
+  **Example:** `"this"`
+</ParamField>
+
+<ParamField body="sid" type="string">
+  Schedule ID (required when `type` is `"future"`). Groups related schedule entries.
+  
+  **Example:** `"abc123def4"`
+</ParamField>
+
+<ParamField body="member_id" type="integer">
+  User ID (required when `type` is `"future"`). Deletes only schedules for this specific member.
+  
+  **Example:** `5`
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="string">
+  Success message confirming the schedule was deleted.
+</ResponseField>
+
+<ResponseField name="status" type="integer">
+  HTTP status code (200).
+</ResponseField>
+
+## Example Request - Delete Single Schedule
+```bash

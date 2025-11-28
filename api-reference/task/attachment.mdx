@@ -1,0 +1,83 @@
+---
+title: 'Add Attachment to Task'
+openapi: 'POST /api/v3/task/{taskId}/attachment'
+---
+
+## Overview
+
+Upload and attach files to a specific task. Attachments help provide additional context, documentation, or resources related to the task.
+
+## Path Parameters
+
+<ParamField path="taskId" type="integer" required>
+  The unique identifier of the task to attach the file to.
+  
+  **Example:** `456`
+</ParamField>
+
+## Request Body
+
+<ParamField body="attachment" type="file" required>
+  The file to be attached to the task. Supports common file formats including images, documents, and archives.
+  
+  **Supported formats:** JPG, PNG, PDF, DOCX, XLSX, ZIP, etc.
+  
+  **Max size:** 10MB
+</ParamField>
+
+<ParamField body="team_id" type="integer" required>
+  The ID of the team that owns the task.
+  
+  **Example:** `1`
+</ParamField>
+
+<ParamField body="description" type="string">
+  Optional description or note about the attachment.
+  
+  **Example:** `"Design mockup for the login screen"`
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="integer">
+  The unique identifier for the attachment.
+</ResponseField>
+
+<ResponseField name="task_id" type="integer">
+  The ID of the task this attachment belongs to.
+</ResponseField>
+
+<ResponseField name="team_id" type="integer">
+  The ID of the team that owns the task.
+</ResponseField>
+
+<ResponseField name="file_name" type="string">
+  The original name of the uploaded file.
+</ResponseField>
+
+<ResponseField name="file_url" type="string">
+  The URL to access or download the attachment.
+</ResponseField>
+
+<ResponseField name="file_size" type="integer">
+  The size of the file in bytes.
+</ResponseField>
+
+<ResponseField name="file_type" type="string">
+  The MIME type of the uploaded file.
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Description or note about the attachment.
+</ResponseField>
+
+<ResponseField name="uploaded_by" type="integer">
+  User ID of the person who uploaded the attachment.
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  The timestamp when the attachment was uploaded (ISO 8601 format).
+</ResponseField>
+
+## Example Request
+```bash

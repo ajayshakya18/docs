@@ -1,0 +1,33 @@
+---
+title: 'Create Team'
+openapi: 'POST /api/v3/mobile/team/createTeam'
+---
+
+## Overview
+
+Create a new team in your workspace. Teams help organize projects and members together.
+
+## Request Body
+
+The request body should contain the following fields:
+
+<ParamField body="name" type="string" required>
+  The name of the new team. This will be displayed across the application.
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="integer">
+  The unique identifier for the newly created team.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  The name of the team.
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  The timestamp when the team was created (ISO 8601 format).
+</ResponseField>
+
+## Example Request
+```bash

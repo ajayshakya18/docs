@@ -1,8 +1,8 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
+    "title": "Thareja API Documentation",
+    "description": "A comprehensive API for team and task management",
     "license": {
       "name": "MIT"
     },
@@ -19,28 +19,108 @@
     }
   ],
   "paths": {
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
+    "/api/v3/mobile/team/createTeam": {
+      "post": {
+        "tags": ["Teams"],
+        "summary": "Create a new team",
+        "description": "Creates a new team",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewTeam"
+              }
             }
-          }
-        ],
+          },
+          "required": true
+        },
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
+          "200": {
+            "description": "New Team response",
+            "content": {
+              "application/json": {}
+            }
           },
           "400": {
-            "description": "unexpected error",
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/mobile/invitation/sendInvitation": {
+      "post": {
+        "operationId": "sendTeamInvitation",
+        "tags": ["Teams"],
+        "summary": "Send team invitation",
+        "description": "Send an invitation to a user to join a team with specified role and payment settings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamInvitation"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Invitation sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "string",
+                      "example": "invitation sent successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Missing team_id or permission denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "team_id missing"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Team not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -54,7 +134,9 @@
     },
     "/api/v3/team/getTeams": {
       "get": {
-        "description": "Returns all the teams of the user has access.",
+        "tags": ["Teams"],
+        "summary": "Get all teams",
+        "description": "Returns all the teams the user has access to.",
         "responses": {
           "200": {
             "description": "Team list response",
@@ -69,7 +151,131 @@
           "400": {
             "description": "Unexpected error",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+     
+    },
+    "/api/v3/team/{teamId}": {
+      "get": {
+        "tags": ["Teams"],
+        "summary": "Get team by ID",
+        "description": "Returns a specific team by ID",
+        "parameters": [
+          {
+            "name": "teamId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Team response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Team not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Teams"],
+        "summary": "Update team",
+        "description": "Updates an existing team",
+        "parameters": [
+          {
+            "name": "teamId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewTeam"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Updated team response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Team not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Teams"],
+        "summary": "Delete team",
+        "description": "Deletes a team",
+        "parameters": [
+          {
+            "name": "teamId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Team deleted successfully"
+          },
+          "404": {
+            "description": "Team not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
             }
           }
         }
@@ -77,6 +283,8 @@
     },
     "/api/v3/task/create": {
       "post": {
+        "tags": ["Tasks"],
+        "summary": "Create a new task",
         "description": "Creates a new task in the project",
         "requestBody": {
           "content": {
@@ -92,59 +300,511 @@
           "200": {
             "description": "New task response",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
             }
           },
           "400": {
-            "description": "unexpected error",
+            "description": "Unexpected error",
             "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
-      "post": {
-        "description": "Information about a new plant added to the store",
-        "requestBody": {
-          "description": "Plant added to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
-        },
+        }
+      },
+      "get": {
+        "tags": ["Tasks"],
+        "summary": "Get all tasks",
+        "description": "Returns all tasks for the user",
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "query",
+            "description": "Filter tasks by project ID",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "assignee",
+            "in": "query",
+            "description": "Filter tasks by assignee user ID",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
+            "description": "Task list response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Task"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
+    },
+    "/api/taskmanager/v1/task/updateAssignee/{taskId}": {
+      "post": {
+        "tags": ["Tasks"],
+        "summary": "Update task assignee",
+        "description": "Change assignee for this task",
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the task",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 456
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/updateAssignee"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Update assignee response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Task not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/task/comment/add": {
+      "post": {
+        "operationId": "addTaskComment",
+        "tags": ["Comments"],
+        "summary": "Add comment to task",
+        "description": "Add a comment to a task and notify relevant team members",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewComment"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Comment added successfully",
+            "content": {
+              "application/json": {
+                
+                
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Empty comment",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "comment can't be null!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Task not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/task/comment/getList/{taskId}": {
+      "get": {
+        "operationId": "getTaskComments",
+        "tags": ["Comments"],
+        "summary": "Get task comments",
+        "description": "Retrieve all comments for a specific task in descending order (newest first)",
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "description": "The unique identifier of the task",
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "example": 456
+            }
+          }
+        ]
+        
+      }
+    },
+    "/api/v3/project/create": {
+      "post": {
+        "tags": ["Projects"],
+        "summary": "Create a new project",
+        "description": "Creates a new project in the workspace with unique name and key",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewProject"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Project created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - Duplicate project name or key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "This project name is already exist in your organization"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/meeting/create": {
+      "post": {
+        "operationId": "createMeeting",
+        "tags": ["Meetings"],
+        "summary": "Create meeting request",
+        "description": "Create a meeting request with another user. The recipient receives email and push notifications to confirm or reject.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewMeeting"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Meeting created successfully",
+            "content": {
+              "application/json": {
+               
+                
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Invalid or missing token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/client/create": {
+      "post": {
+        "operationId": "createClient",
+        "tags": ["Clients"],
+        "summary": "Create a new client",
+        "description": "Create a new client with billing configuration, budget settings, and contact information",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewClient"
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/NewClientWithFile"
+              }
+            }
+          },
+          "required": true
+        }
+        
+      }
+    },
+    "/api/v1/timemanagement/schedule/add": {
+      "post": {
+        "operationId": "createSchedule",
+        "tags": ["Schedules"],
+        "summary": "Create work schedule",
+        "description": "Create work schedules for team members with support for one-time, weekly, or bi-weekly recurrence",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewSchedule"
+              }
+            }
+          },
+          "required": true
+        }
+        
+      }
+    },
+    "/api/v1/timemanagement/schedule/delete": {
+      "post": {
+        "operationId": "deleteSchedule",
+        "tags": ["Schedules"],
+        "summary": "Delete schedule",
+        "description": "Delete a single schedule occurrence or all future occurrences. Only managers and owners can delete schedules.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteSchedule"
+              }
+            }
+          },
+          "required": true
+        }
+      
+      }
     }
+  
+    
   },
   "components": {
     "schemas": {
-      "Plant": {
+      "NewTeam": {
         "required": [
           "name"
         ],
         "type": "object",
         "properties": {
           "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
+            "description": "The name of the new team",
+            "type": "string",
+            "example": "Engineering Team"
           }
         }
       },
+      "TeamInvitation": {
+        "required": ["team_id", "email", "role", "job_title"],
+        "type": "object",
+        "properties": {
+          "team_id": {
+            "description": "The ID of the team to invite the user to",
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "email": {
+            "description": "The email address of the user to invite",
+            "type": "string",
+            "format": "email",
+            "example": "john.doe@example.com"
+          },
+          "role": {
+            "description": "The role to assign to the invited user",
+            "type": "string",
+            "enum": ["owner", "manager", "member"],
+            "example": "member"
+          },
+          "job_title": {
+            "description": "The job title for the invited user",
+            "type": "string",
+            "example": "Senior Developer"
+          },
+          "pay_rate": {
+            "description": "The pay rate (hourly or fixed amount depending on pay_type)",
+            "type": "number",
+            "format": "float",
+            "example": 50.00
+          },
+          "bill_rate": {
+            "description": "The billable rate (hourly rate charged to clients)",
+            "type": "number",
+            "format": "float",
+            "example": 75.00
+          },
+          "weekly_limit": {
+            "description": "Maximum hours per week the user can work",
+            "type": "number",
+            "format": "float",
+            "example": 40
+          },
+          "pay_type": {
+            "description": "Type of payment structure",
+            "type": "string",
+            "enum": ["hourly", "fixed"],
+            "default": "hourly",
+            "example": "hourly"
+          },
+          "pay_period": {
+            "description": "Frequency of payment",
+            "type": "string",
+            "enum": ["weekly", "bi-weekly", "twice per month", "monthly"],
+            "default": "weekly",
+            "example": "weekly"
+          },
+          "ip": {
+            "description": "IP address of the inviter (for audit trail)",
+            "type": "string",
+            "example": "192.168.1.1"
+          },
+          "agent": {
+            "description": "User agent string of the inviter (for audit trail)",
+            "type": "string",
+            "example": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+          }
+        }
+      },
+     
       "NewTask": {
         "required": [
           "project_id",
@@ -154,8 +814,8 @@
         "properties": {
           "task_name": {
             "description": "The name of the task",
-            "type": "string"
-            
+            "type": "string",
+            "example": "Implement login feature"
           },
           "project_id": {
             "description": "The ID of the project this task belongs to",
@@ -163,7 +823,6 @@
             "format": "int64",
             "example": 123
           },
-         
           "description": {
             "description": "Detailed description of the task",
             "type": "string",
@@ -175,7 +834,6 @@
             "format": "date-time",
             "example": "2025-12-31T23:59:59Z"
           },
-         
           "assignee": {
             "description": "User ID of the person assigned to this task. Defaults to the logged-in user's ID if not provided.",
             "type": "integer",
@@ -183,21 +841,515 @@
             "example": 1
           },
           "priority": {
-            "description": "Priority level of the task, You can get priority list using priority api if you not set it will add default 3 means Medium",
+            "description": "Priority level of the task. You can get priority list using priority API. If not set, it will default to 3 (Medium)",
             "type": "integer",
             "format": "int64",
             "example": 1,
             "default": 3
           },
           "sprintIds": {
-            "description": "Sprint id in array if you want to create this task under in sprint",
+            "description": "Array of sprint IDs if you want to create this task under specific sprints",
             "type": "array",
-            "format": "int64",
-            "example": [1,2]
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": [1, 2]
           }
-         
         }
       },
+      "updateAssignee": {
+        "required": ["assignee"],
+        "type": "object",
+        "properties": {
+          "assignee": {
+            "description": "User ID of the person to assign this task to",
+            "type": "integer",
+            "format": "int64",
+            "example": 5
+          },
+          "comment": {
+            "description": "Optional comment about the assignment change",
+            "type": "string",
+            "example": "This task is high priority. Please review by EOD."
+          }
+        }
+      },
+      "NewComment": {
+        "required": ["comment"],
+        "type": "object",
+        "properties": {
+          "comment": {
+            "description": "The comment text (supports HTML)",
+            "type": "string",
+            "example": "This task is progressing well. I've completed the first phase."
+          },
+          "task_id": {
+            "description": "The ID of the task to add the comment to",
+            "type": "integer",
+            "format": "int64",
+            "example": 456
+          },
+          "refrence_id": {
+            "description": "Alternative field for task_id",
+            "type": "integer",
+            "format": "int64",
+            "example": 456
+          },
+          "type": {
+            "description": "The type of comment",
+            "type": "string",
+            "example": "update"
+          },
+          "watchersIds": {
+            "description": "Array of user IDs to add as watchers",
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": [5, 7, 9]
+          }
+        }
+      },
+     
+      "NewProject": {
+        "required": ["project", "key", "client_id"],
+        "type": "object",
+        "properties": {
+          "project": {
+            "description": "The name of the project (must be unique within team)",
+            "type": "string",
+            "example": "Mobile App Development"
+          },
+          "key": {
+            "description": "Unique project key (2-5 uppercase letters)",
+            "type": "string",
+            "example": "MAD"
+          },
+          "client_id": {
+            "description": "The ID of the client associated with this project",
+            "type": "integer",
+            "format": "int64",
+            "example": 10
+          },
+          "description": {
+            "description": "Detailed description of the project",
+            "type": "string",
+            "example": "Development of a cross-platform mobile application for iOS and Android"
+          },
+          "team_id": {
+            "description": "The ID of the team this project belongs to",
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+         
+          "project_manager": {
+            "description": "User ID(s) of project manager(s)",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int64"
+                }
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "example": [5, 7]
+          },
+          "qa_lead": {
+            "description": "User ID of the QA lead",
+            "type": "integer",
+            "format": "int64",
+            "example": 8
+          },
+          "users": {
+            "description": "User ID(s) of team members",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int64"
+                }
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "example": [1, 2, 3, 4]
+          },
+          "groups": {
+            "description": "Group ID(s) associated with this project",
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int64"
+                }
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "example": [1, 2]
+          },
+          "start_date": {
+            "description": "The start date of the project",
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-12-01T00:00:00Z"
+          },
+          "due_date": {
+            "description": "The due date for project completion",
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-06-30T23:59:59Z"
+          },
+          "billable": {
+            "description": "Whether the project is billable",
+            "type": "string",
+            "enum": ["yes", "no"],
+            "default": "yes",
+            "example": "yes"
+          },
+          "visible": {
+            "description": "Visibility setting for the project",
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "ProjectResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 123
+          },
+          "project": {
+            "type": "string",
+            "example": "Mobile App Development"
+          },
+          "key": {
+            "type": "string",
+            "example": "MAD"
+          },
+          "project_description": {
+            "type": "string",
+            "example": "Development of a cross-platform mobile application"
+          },
+          "team_id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "client": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 10
+              },
+              "name": {
+                "type": "string",
+                "example": "Acme Corporation"
+              },
+              "profile": {
+                "type": "string",
+                "example": "https://app.thareja.ai/profiles/acme.jpg"
+              }
+            }
+          },
+          "project_manager": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "example": [5, 7]
+          },
+          "qa_lead": {
+            "type": "integer",
+            "example": 8
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": ["1", "2", "3", "4"]
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "example": [1, 2]
+          },
+          "watcher": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "starting_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isBillable": {
+            "type": "boolean",
+            "example": true
+          },
+          "billable": {
+            "type": "string",
+            "example": "yes"
+          },
+          "visible": {
+            "type": "integer",
+            "example": 1
+          },
+          "visiblity": {
+            "type": "integer",
+            "example": 1
+          },
+          "task": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "completed": {
+            "type": "integer",
+            "example": 0
+          },
+          "user_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "NewMeeting": {
+        "required": ["user_id", "team_id", "date"],
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "description": "The ID of the user to request a meeting with",
+            "type": "integer",
+            "format": "int64",
+            "example": 5
+          },
+          "team_id": {
+            "description": "The ID of the team this meeting belongs to",
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "date": {
+            "description": "The proposed date and time for the meeting",
+            "type": "string",
+            "example": "2025-12-15 14:00:00"
+          },
+          "link": {
+            "description": "Optional meeting link (Zoom, Google Meet, etc.)",
+            "type": "string",
+            "format": "uri",
+            "example": "https://zoom.us/j/1234567890"
+          }
+        }
+      },
+      "NewClient": {
+        "required": ["name", "email"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Acme Corporation"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "contact@acmecorp.com"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+1-555-123-4567"
+          },
+          "company": {
+            "type": "string",
+            "example": "Acme Corporation Inc."
+          },
+          "website": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://www.acmecorp.com"
+          },
+          "billing_address1": {
+            "type": "string",
+            "example": "123 Main Street"
+          },
+          "billing_address2": {
+            "type": "string",
+            "example": "Suite 100"
+          },
+          "city": {
+            "type": "string",
+            "example": "San Francisco"
+          },
+          "state": {
+            "type": "string",
+            "example": "California"
+          },
+          "zipcode": {
+            "type": "string",
+            "example": "94102"
+          },
+          "country": {
+            "type": "string",
+            "example": "United States"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "net_term": {
+            "type": "integer",
+            "example": 30
+          },
+          "tax_id": {
+            "type": "string",
+            "example": "12-3456789"
+          },
+          "tax_rate": {
+            "type": "number",
+            "format": "float",
+            "example": 8.5
+          }
+        }
+      },
+      "NewClientWithFile": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/NewClient"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "profile": {
+                "type": "string",
+                "format": "binary",
+                "description": "Client profile picture (PNG, JPG, JPEG)"
+              }
+            }
+          }
+        ]
+      },
+      "NewSchedule": {
+        "required": ["date_from", "time_from", "time_to", "timezone", "minimum_hours", "repetition"],
+        "type": "object",
+        "properties": {
+          "date_from": {
+            "description": "Start date and time for the schedule",
+            "type": "string",
+            "example": "Mon Dec 15 2025 09:00:00 GMT-0800 (PST)"
+          },
+          "time_from": {
+            "description": "Start time (HH:MM format, 24-hour)",
+            "type": "string",
+            "pattern": "^([01]?[0-9]|2[0-3]):[0-5][0-9]$",
+            "example": "09:00"
+          },
+          "time_to": {
+            "description": "End time (HH:MM format, 24-hour)",
+            "type": "string",
+            "pattern": "^([01]?[0-9]|2[0-3]):[0-5][0-9]$",
+            "example": "17:00"
+          },
+          "timezone": {
+            "description": "Timezone for the schedule",
+            "type": "string",
+            "example": "America/New_York"
+          },
+          "minimum_hours": {
+            "description": "Minimum hours for this schedule shift",
+            "type": "number",
+            "format": "float",
+            "example": 8.0
+          },
+          "repetition": {
+            "description": "How the schedule repeats",
+            "type": "string",
+            "enum": ["never", "weekly", "bi-Weekly"],
+            "example": "weekly"
+          },
+          "members": {
+            "description": "Comma-separated list of user IDs",
+            "type": "string",
+            "example": "1,5,7,9"
+          },
+          "groupsId": {
+            "description": "Comma-separated list of group IDs",
+            "type": "string",
+            "example": "2,3"
+          },
+          "day_repeat": {
+            "description": "Comma-separated days for recurring schedules",
+            "type": "string",
+            "example": "mon,wed,fri"
+          },
+          "until": {
+            "description": "End date for recurring schedules",
+            "type": "string",
+            "example": "Fri Dec 31 2025 17:00:00 GMT-0800 (PST)"
+          }
+        }
+      },
+      "DeleteSchedule": {
+        "required": ["id", "type"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The unique identifier of the schedule to delete",
+            "type": "integer",
+            "format": "int64",
+            "example": 123
+          },
+          "type": {
+            "description": "Type of deletion",
+            "type": "string",
+            "enum": ["this", "future"],
+            "example": "this"
+          },
+          "sid": {
+            "description": "Schedule ID (required for 'future' type)",
+            "type": "string",
+            "example": "abc123def4"
+          },
+          "member_id": {
+            "description": "User ID (required for 'future' type)",
+            "type": "integer",
+            "format": "int64",
+            "example": 5
+          }
+        }
+      },
+      
       "Error": {
         "required": [
           "error",
@@ -207,10 +1359,12 @@
         "properties": {
           "error": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "example": 400
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "example": "Invalid request parameters"
           }
         }
       }
@@ -218,8 +1372,27 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "scheme": "bearer"
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Teams",
+      "description": "Team management endpoints"
+    },
+    {
+      "name": "Tasks",
+      "description": "Task management endpoints"
+    },
+    {
+      "name": "Projects",
+      "description": "Project management endpoints"
+    },
+    {
+      "name": "Comments",
+      "description": "Comment management endpoints"
+    }
+  ]
 }

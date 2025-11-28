@@ -1,0 +1,119 @@
+---
+title: 'Update Task'
+openapi: 'PUT /api/v3/task/edit/{taskId}'
+---
+
+## Overview
+
+Update an existing task's details including name, description, assignee, priority, due date, and sprint associations.
+
+## Path Parameters
+
+<ParamField path="taskId" type="integer" required>
+  The unique identifier of the task to update.
+  
+  **Example:** `456`
+</ParamField>
+
+## Request Body
+
+All fields are optional. Only include the fields you want to update.
+
+<ParamField body="task_name" type="string">
+  The new name of the task.
+  
+  **Example:** `"Implement OAuth login feature"`
+</ParamField>
+
+<ParamField body="project_id" type="integer">
+  The ID of the project this task belongs to.
+  
+  **Example:** `123`
+</ParamField>
+
+<ParamField body="description" type="string">
+  Updated detailed description of the task.
+  
+  **Example:** `"Implement OAuth 2.0 authentication with Google and GitHub providers"`
+</ParamField>
+
+<ParamField body="due_date" type="string">
+  The updated due date for the task in UTC (ISO 8601 format).
+  
+  **Example:** `"2025-12-31T23:59:59Z"`
+</ParamField>
+
+<ParamField body="assignee" type="integer">
+  User ID of the person to assign this task to.
+  
+  **Example:** `5`
+</ParamField>
+
+<ParamField body="priority" type="integer">
+  Updated priority level of the task. You can get the priority list using the priority API.
+  
+  **Example:** `2`
+</ParamField>
+
+<ParamField body="status" type="int">
+  The current status of the task.
+  
+  **Example:**
+</ParamField>
+
+<ParamField body="sprintIds" type="array">
+  Array of sprint IDs to associate this task with. This replaces existing sprint associations.
+  
+  **Example:** `[2, 3]`
+</ParamField>
+
+
+## Response
+
+<ResponseField name="id" type="integer">
+  The unique identifier of the task.
+</ResponseField>
+
+<ResponseField name="task_name" type="string">
+  The name of the task.
+</ResponseField>
+
+<ResponseField name="project_id" type="integer">
+  The ID of the project this task belongs to.
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Detailed description of the task.
+</ResponseField>
+
+<ResponseField name="due_date" type="string">
+  The due date for the task in UTC.
+</ResponseField>
+
+<ResponseField name="assignee" type="integer">
+  User ID of the person assigned to this task.
+</ResponseField>
+
+<ResponseField name="priority" type="integer">
+  Priority level of the task.
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  The current status of the task.
+</ResponseField>
+
+<ResponseField name="sprint_ids" type="array">
+  Array of sprint IDs this task is associated with.
+</ResponseField>
+
+
+<ResponseField name="created_at" type="string">
+  The timestamp when the task was created (ISO 8601 format).
+</ResponseField>
+
+<ResponseField name="updated_at" type="string">
+  The timestamp when the task was last updated (ISO 8601 format).
+</ResponseField>
+
+## Example Request
+```bash

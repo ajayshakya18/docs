@@ -1,0 +1,33 @@
+---
+title: 'Add Comment to Task'
+openapi: 'POST /api/v3/task/comment/add'
+---
+
+## Overview
+
+Add a comment to a task. Comments can be used to discuss task details, provide updates, or ask questions. When a comment is added, relevant team members (watchers, assignee, reporter, and project managers) are automatically notified via email and push notifications.
+
+## Request Body
+
+<ParamField body="comment" type="string" required>
+  The comment text. Supports HTML formatting.
+  
+  **Example:** `"This task is progressing well. I've completed the first phase."`
+</ParamField>
+
+<ParamField body="task_id" type="integer" required>
+  The ID of the task to add the comment to. Can also be provided as `refrence_id`.
+  
+  **Example:** `456`
+</ParamField>
+
+
+<ParamField body="watchersIds" type="array">
+  Array of user IDs to add as watchers to the task when commenting. These users will receive notifications about future updates.
+  
+  **Example:** `[5, 7, 9]`
+</ParamField>
+
+
+## Example Request
+```bash

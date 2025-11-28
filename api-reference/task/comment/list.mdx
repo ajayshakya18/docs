@@ -1,0 +1,356 @@
+---
+title: 'Get Task Comments'
+openapi: 'GET /api/v3/task/comment/getList/{taskId}'
+---
+
+## Overview
+
+Retrieve all comments for a specific task. Comments are returned in descending order (newest first) with relative timestamps based on the user's timezone.
+
+## Path Parameters
+
+<ParamField path="taskId" type="integer" required>
+  The unique identifier of the task to retrieve comments for.
+  
+  **Example:** `456`
+</ParamField>
+
+## Response
+
+Returns an array of comment objects.
+
+<ResponseField name="id" type="integer">
+  The unique identifier of the comment.
+</ResponseField>
+
+<ResponseField name="task_id" type="integer">
+  The ID of the task this comment belongs to.
+</ResponseField>
+
+<ResponseField name="refrence_id" type="integer">
+  Reference ID (same as task_id).
+</ResponseField>
+
+<ResponseField name="user_id" type="integer">
+  The ID of the user who created the comment.
+</ResponseField>
+
+<ResponseField name="team_id" type="integer">
+  The ID of the team.
+</ResponseField>
+
+<ResponseField name="comment" type="string">
+  The comment text.
+</ResponseField>
+
+<ResponseField name="type" type="string">
+  The type of comment.
+</ResponseField>
+
+<ResponseField name="reaction" type="object">
+  Reaction data object containing reaction counts and users.
+  
+  <Expandable title="properties">
+    <ResponseField name="reaction" type="object">
+      Object containing reaction types (like, love, haha, wow, sad, angry, dislike) with their counts.
+    </ResponseField>
+    
+    <ResponseField name="users" type="array">
+      Array of users who reacted to this comment.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="reactedUsers" type="array">
+  Array of users who reacted to this comment (extracted from reaction object for convenience).
+</ResponseField>
+
+<ResponseField name="time" type="string">
+  Human-readable relative time since the comment was posted.
+  
+  **Formats:**
+  - `"X second ago"` - Less than 1 minute
+  - `"X minutes ago"` - 1 minute to 1 hour
+  - `"X hours X minutes ago"` - 1 hour to 12 hours
+  - `"DD/MMM/YYYY HH:MM AM/PM"` - More than 12 hours
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  The timestamp when the comment was created (ISO 8601 format).
+</ResponseField>
+
+<ResponseField name="updated_at" type="string">
+  The timestamp when the comment was last updated (ISO 8601 format).
+</ResponseField>
+
+## Example Request
+```bash
+curl --request GET \
+  --url https://staging.thareja.org/api/v3/task/comment/456 \
+  --header 'Authorization: Bearer YOUR_API_TOKEN'
+```
+
+## Example Request (JavaScript)
+```javascript
+fetch('https://staging.thareja.org/api/v3/task/comment/456', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_TOKEN'
+  }
+})
+.then(response => response.json())
+.then(data => console.log(data));
+```
+
+## Example Response
+```json
+[
+  {
+    "id": 789,
+    "task_id": 456,
+    "refrence_id": 456,
+    "user_id": 1,
+    "team_id": 1,
+    "comment": "This task is progressing well. I've completed the first phase.",
+    "type": "update",
+    "reaction": {
+      "reaction": {
+        "like": {
+          "total": 3,
+          "value": "like"
+        },
+        "love": {
+          "total": 1,
+          "value": "love"
+        },
+        "haha": {
+          "total": 0,
+          "value": "haha"
+        },
+        "wow": {
+          "total": 0,
+          "value": "wow"
+        },
+        "sad": {
+          "total": 0,
+          "value": "sad"
+        },
+        "angry": {
+          "total": 0,
+          "value": "angry"
+        },
+        "dislike": {
+          "total": 0,
+          "value": "dislike"
+        }
+      },
+      "users": [
+        {
+          "user_id": 5,
+          "name": "John Doe",
+          "reaction": "like"
+        },
+        {
+          "user_id": 7,
+          "name": "Jane Smith",
+          "reaction": "like"
+        }
+      ]
+    },
+    "reactedUsers": [
+      {
+        "user_id": 5,
+        "name": "John Doe",
+        "reaction": "like"
+      },
+      {
+        "user_id": 7,
+        "name": "Jane Smith",
+        "reaction": "like"
+      }
+    ],
+    "time": "5 minutes ago",
+    "created_at": "2025-11-28T10:25:00Z",
+    "updated_at": "2025-11-28T10:25:00Z"
+  },
+  {
+    "id": 788,
+    "task_id": 456,
+    "refrence_id": 456,
+    "user_id": 3,
+    "team_id": 1,
+    "comment": "I have a question about the requirements.",
+    "type": "question",
+    "reaction": {
+      "reaction": {
+        "like": {
+          "total": 0,
+          "value": "like"
+        },
+        "love": {
+          "total": 0,
+          "value": "love"
+        },
+        "haha": {
+          "total": 0,
+          "value": "haha"
+        },
+        "wow": {
+          "total": 0,
+          "value": "wow"
+        },
+        "sad": {
+          "total": 0,
+          "value": "sad"
+        },
+        "angry": {
+          "total": 0,
+          "value": "angry"
+        },
+        "dislike": {
+          "total": 0,
+          "value": "dislike"
+        }
+      },
+      "users": []
+    },
+    "reactedUsers": [],
+    "time": "2 hours 15 minutes ago",
+    "created_at": "2025-11-28T08:15:00Z",
+    "updated_at": "2025-11-28T08:15:00Z"
+  },
+  {
+    "id": 787,
+    "task_id": 456,
+    "refrence_id": 456,
+    "user_id": 2,
+    "team_id": 1,
+    "comment": "Task created and assigned.",
+    "type": null,
+    "reaction": {
+      "reaction": {
+        "like": {
+          "total": 1,
+          "value": "like"
+        },
+        "love": {
+          "total": 0,
+          "value": "love"
+        },
+        "haha": {
+          "total": 0,
+          "value": "haha"
+        },
+        "wow": {
+          "total": 0,
+          "value": "wow"
+        },
+        "sad": {
+          "total": 0,
+          "value": "sad"
+        },
+        "angry": {
+          "total": 0,
+          "value": "angry"
+        },
+        "dislike": {
+          "total": 0,
+          "value": "dislike"
+        }
+      },
+      "users": [
+        {
+          "user_id": 1,
+          "name": "Admin User",
+          "reaction": "like"
+        }
+      ]
+    },
+    "reactedUsers": [
+      {
+        "user_id": 1,
+        "name": "Admin User",
+        "reaction": "like"
+      }
+    ],
+    "time": "27/Nov/2025 15:30 PM",
+    "created_at": "2025-11-27T15:30:00Z",
+    "updated_at": "2025-11-27T15:30:00Z"
+  }
+]
+```
+
+## Example Response - Empty Comments
+```json
+[]
+```
+
+## Time Display Format
+
+The `time` field is calculated based on the user's timezone and displays in the following formats:
+
+| Time Elapsed | Format | Example |
+|--------------|--------|---------|
+| Less than 1 minute | `X second ago` | `"30 second ago"` |
+| 1 minute to 1 hour | `X minutes ago` | `"15 minutes ago"` |
+| 1 hour to 12 hours | `X hours X minutes ago` | `"2 hours 30 minutes ago"` |
+| More than 12 hours | `DD/MMM/YYYY HH:MM AM/PM` | `"27/Nov/2025 15:30 PM"` |
+
+## Error Responses
+
+<ResponseExample>
+```json 401 Unauthorized
+{
+  "error": 401,
+  "message": "Invalid or missing authentication token"
+}
+```
+```json 404 Not Found - Task Not Found
+{
+  "error": 404,
+  "message": "Task with ID 456 does not exist"
+}
+```
+```json 403 Forbidden - No Access
+{
+  "error": 403,
+  "message": "You don't have permission to view comments for this task"
+}
+```
+</ResponseExample>
+
+## Notes
+
+- **Timezone awareness**: All timestamps are converted to the user's timezone for display
+- **Descending order**: Comments are returned with the newest first (DESC order by ID)
+- **Empty arrays**: If a task has no comments, an empty array `[]` is returned
+- **Reaction data**: Each comment includes full reaction data and a convenient `reactedUsers` array
+- **HTML support**: Comments may contain HTML formatting
+- **Relative time**: The `time` field provides human-readable timestamps
+- **User timezone**: Timestamps are automatically adjusted to match the authenticated user's timezone setting
+- **No pagination**: All comments are returned in a single response (consider pagination for tasks with many comments)
+
+## Use Cases
+
+- **Display comment history**: Show all discussion on a task
+- **Track updates**: See who commented and when
+- **Review reactions**: Check which comments received reactions
+- **Timeline view**: Build a timeline of task discussions
+- **Notification context**: Provide context for comment notifications
+
+## Best Practices
+
+- Cache comment data when possible to reduce API calls
+- Refresh comment list after adding/updating/deleting comments
+- Display reactions inline for better user engagement
+- Consider implementing pagination for tasks with many comments
+- Handle empty comment arrays gracefully in your UI
+- Use the `time` field for display, but `created_at` for sorting/filtering
+
+## Related Endpoints
+
+- [Add Comment](/api-reference/task/comments/add) - Add a new comment to a task
+- [Update Comment](/api-reference/task/comments/update) - Edit an existing comment
+- [Delete Comment](/api-reference/task/comments/delete) - Remove a comment
+- [Add Reaction](/api-reference/task/comments/reaction/add) - React to a comment
+- [Get Task](/api-reference/task/get) - Retrieve task details

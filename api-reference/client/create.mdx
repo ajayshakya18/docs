@@ -1,0 +1,499 @@
+---
+title: 'Create Client'
+openapi: 'POST /api/v1/client/create'
+---
+
+## Overview
+
+Create a new client in your workspace. Clients can be associated with projects for billing and invoicing purposes. Each client includes billing configuration, budget settings, and contact information.
+
+## Request Body
+
+<ParamField body="name" type="string" required>
+  The name of the client or company.
+  
+  **Example:** `"Acme Corporation"`
+</ParamField>
+
+<ParamField body="email" type="string" required>
+  The client's email address. Must be unique across all clients.
+  
+  **Format:** Valid email address
+  
+  **Example:** `"contact@acmecorp.com"`
+</ParamField>
+
+<ParamField body="profile" type="file">
+  Client profile picture or logo.
+  
+  **Allowed formats:** PNG, JPG, JPEG
+  
+  **Max size:** As per server configuration
+</ParamField>
+
+<ParamField body="phone" type="string">
+  Client's phone number.
+  
+  **Example:** `"+1-555-123-4567"`
+</ParamField>
+
+<ParamField body="company" type="string">
+  Company name (if different from client name).
+  
+  **Example:** `"Acme Corporation Inc."`
+</ParamField>
+
+<ParamField body="website" type="string">
+  Client's website URL.
+  
+  **Example:** `"https://www.acmecorp.com"`
+</ParamField>
+
+### Billing Address
+
+<ParamField body="billing_address1" type="string">
+  Primary billing address line.
+  
+  **Example:** `"123 Main Street"`
+</ParamField>
+
+<ParamField body="billing_address2" type="string">
+  Secondary billing address line (suite, apartment, etc.).
+  
+  **Example:** `"Suite 100"`
+</ParamField>
+
+<ParamField body="city" type="string">
+  City for billing address.
+  
+  **Example:** `"San Francisco"`
+</ParamField>
+
+<ParamField body="state" type="string">
+  State or province for billing address.
+  
+  **Example:** `"California"`
+</ParamField>
+
+<ParamField body="zipcode" type="string">
+  ZIP or postal code for billing address.
+  
+  **Example:** `"94102"`
+</ParamField>
+
+<ParamField body="country" type="string">
+  Country for billing address.
+  
+  **Example:** `"United States"`
+</ParamField>
+
+### Invoice Settings
+
+
+
+
+<ParamField body="notes" type="string">
+  Custom invoice notes for this client (if not using org_notes).
+  
+  **Example:** `"Payment due within 30 days of invoice date."`
+</ParamField>
+
+<ParamField body="net_term" type="integer">
+  Custom net payment terms in days (if not using org_net_term).
+  
+  **Example:** `30`
+</ParamField>
+
+<ParamField body="tax_id" type="string">
+  Client's tax identification number.
+  
+  **Example:** `"12-3456789"`
+</ParamField>
+
+<ParamField body="tax_rate" type="number">
+  Tax rate percentage for invoices.
+  
+  **Example:** `8.5`
+</ParamField>
+
+### Budget Settings
+
+<ParamField body="budget_type" type="string">
+  Type of budget tracking.
+  
+  **Allowed values:** `"total_cost"`, `"hours_cost"`
+  
+  **Example:** `"total_cost"`
+</ParamField>
+
+<ParamField body="budget_cost" type="number">
+  Budget amount in currency.
+  
+  **Example:** `50000.00`
+</ParamField>
+
+<ParamField body="budget_hours" type="number">
+  Budget amount in hours (for hours_cost type).
+  
+  **Example:** `500`
+</ParamField>
+
+<ParamField body="budget_notify_at" type="integer">
+  Percentage at which to notify about budget usage.
+  
+  **Example:** `80`
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="object">
+  The created client object.
+  
+  <Expandable title="properties">
+    <ResponseField name="id" type="integer">
+      Unique identifier for the client.
+    </ResponseField>
+    
+    <ResponseField name="name" type="string">
+      Client name.
+    </ResponseField>
+    
+    <ResponseField name="email" type="string">
+      Client email address.
+    </ResponseField>
+    
+    <ResponseField name="profile" type="string">
+      URL to client profile picture/logo.
+    </ResponseField>
+    
+    <ResponseField name="phone" type="string">
+      Client phone number.
+    </ResponseField>
+    
+    <ResponseField name="company" type="string">
+      Company name.
+    </ResponseField>
+    
+    <ResponseField name="website" type="string">
+      Client website URL.
+    </ResponseField>
+    
+    <ResponseField name="team_id" type="integer">
+      Team ID this client belongs to.
+    </ResponseField>
+    
+    <ResponseField name="user_id" type="integer">
+      User ID who created the client.
+    </ResponseField>
+    
+    <ResponseField name="invoices" type="object">
+      Invoice configuration settings.
+    </ResponseField>
+    
+    <ResponseField name="budget" type="object">
+      Budget configuration settings.
+    </ResponseField>
+    
+    <ResponseField name="created_at" type="string">
+      Timestamp when client was created.
+    </ResponseField>
+    
+    <ResponseField name="updated_at" type="string">
+      Timestamp when client was last updated.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Example Request
+```bash
+curl --request POST \
+  --url https://staging.thareja.org/api/v3/client/create \
+  --header 'Authorization: Bearer YOUR_API_TOKEN' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "name": "Acme Corporation",
+    "email": "contact@acmecorp.com",
+    "phone": "+1-555-123-4567",
+    "company": "Acme Corporation Inc.",
+    "website": "https://www.acmecorp.com",
+    "billing_address1": "123 Main Street",
+    "billing_address2": "Suite 100",
+    "city": "San Francisco",
+    "state": "California",
+    "zipcode": "94102",
+    "country": "United States",
+    "org_notes": true,
+    "org_net_term": true,
+    "tax_id": "12-3456789",
+    "tax_rate": 8.5,
+    "budget_type": "total_cost",
+    "budget_cost": 50000.00,
+    "budget_notify_at": 80
+  }'
+```
+
+## Example Request (JavaScript)
+```javascript
+fetch('https://staging.thareja.org/api/v3/client/create', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_TOKEN',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: "Acme Corporation",
+    email: "contact@acmecorp.com",
+    phone: "+1-555-123-4567",
+    company: "Acme Corporation Inc.",
+    website: "https://www.acmecorp.com",
+    billing_address1: "123 Main Street",
+    billing_address2: "Suite 100",
+    city: "San Francisco",
+    state: "California",
+    zipcode: "94102",
+    country: "United States",
+    org_notes: true,
+    org_net_term: true,
+    tax_id: "12-3456789",
+    tax_rate: 8.5,
+    budget_type: "total_cost",
+    budget_cost: 50000.00,
+    budget_notify_at: 80
+  })
+})
+.then(response => response.json())
+.then(data => console.log(data));
+```
+
+## Example Request - With Profile Picture
+```bash
+curl --request POST \
+  --url https://staging.thareja.org/api/v3/client/create \
+  --header 'Authorization: Bearer YOUR_API_TOKEN' \
+  --form 'name="Acme Corporation"' \
+  --form 'email="contact@acmecorp.com"' \
+  --form 'phone="+1-555-123-4567"' \
+  --form 'profile=@/path/to/logo.png' \
+  --form 'org_notes=true' \
+  --form 'org_net_term=true'
+```
+
+## Example Request (JavaScript with File Upload)
+```javascript
+const formData = new FormData();
+formData.append('name', 'Acme Corporation');
+formData.append('email', 'contact@acmecorp.com');
+formData.append('phone', '+1-555-123-4567');
+formData.append('profile', fileInput.files[0]);
+formData.append('org_notes', 'true');
+formData.append('org_net_term', 'true');
+
+fetch('https://staging.thareja.org/api/v3/client/create', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_TOKEN'
+  },
+  body: formData
+})
+.then(response => response.json())
+.then(data => console.log(data));
+```
+
+## Example Response
+```json
+{
+  "success": {
+    "id": 10,
+    "name": "Acme Corporation",
+    "email": "contact@acmecorp.com",
+    "profile": "https://s3.amazonaws.com/bucket/profiles/client-logo.png",
+    "phone": "+1-555-123-4567",
+    "company": "Acme Corporation Inc.",
+    "website": "https://www.acmecorp.com",
+    "team_id": 1,
+    "user_id": 1,
+    "invoices": {
+      "tax_id": "12-3456789",
+      "late_fee": "no",
+      "lineItem": "project-date",
+      "net_term": 30,
+      "tax_rate": 8.5,
+      "frequency": "weekly",
+      "delay_days": 5,
+      "fixedPrice": 0,
+      "autoInvoice": "off",
+      "lineItemText": "By user Project and Date",
+      "amountBasedOn": "hourly",
+      "reminder_days": "10",
+      "include_expense": "no",
+      "include_non_billable_time": "no"
+    },
+    "budget": {
+      "budgetType": "total_cost",
+      "rate": "bill",
+      "cost": 50000.00,
+      "hours": 0,
+      "notifyAt": 80,
+      "reset": "never",
+      "startDate": null,
+      "include_non_billable_time": true
+    },
+    "isInternalClient": false,
+    "created_at": "2025-11-28T10:30:00Z",
+    "updated_at": "2025-11-28T10:30:00Z"
+  }
+}
+```
+
+## Error Responses
+
+<ResponseExample>
+```json 400 Bad Request - Duplicate Email
+{
+  "error": 400,
+  "message": "The email has already been taken."
+}
+```
+```json 400 Bad Request - Invalid Email
+{
+  "error": 400,
+  "message": "The email must be a valid email address."
+}
+```
+```json 400 Bad Request - Missing Required Fields
+{
+  "error": 400,
+  "message": "The email field is required."
+}
+```
+```json 403 Forbidden - Invalid File Type
+{
+  "error": "This file can't be upload on server"
+}
+```
+```json 401 Unauthorized
+{
+  "error": 401,
+  "message": "Invalid or missing authentication token"
+}
+```
+</ResponseExample>
+
+## Default Invoice Settings
+
+When a client is created, the following default invoice settings are applied:
+
+| Setting | Default Value | Description |
+|---------|--------------|-------------|
+| `late_fee` | `no` | Late fee charges disabled |
+| `lineItem` | `project-date` | Invoice line items by project and date |
+| `net_term` | `30` | 30-day payment terms (or org default) |
+| `tax_rate` | `0` | No tax rate (unless specified) |
+| `frequency` | `weekly` | Weekly invoice generation |
+| `delay_days` | `5` | 5-day delay before auto-invoice |
+| `autoInvoice` | `off` | Auto-invoicing disabled |
+| `amountBasedOn` | `hourly` | Hourly-based billing |
+| `reminder_days` | `10` | Payment reminder 10 days after |
+| `include_expense` | `no` | Expenses not included |
+| `include_non_billable_time` | `no` | Non-billable time excluded |
+
+## Default Budget Settings
+
+| Setting | Default Value | Description |
+|---------|--------------|-------------|
+| `budgetType` | `total_cost` | Track by total cost |
+| `rate` | `bill` | Use billable rate |
+| `cost` | `0` | No budget limit |
+| `hours` | `0` | No hour limit |
+| `notifyAt` | `80` | Notify at 80% usage |
+| `reset` | `never` | Budget never resets |
+| `include_non_billable_time` | `true` | Include non-billable |
+
+## Organization Settings Inheritance
+
+### Using `org_notes`
+- When `true`: Client inherits organization's default invoice notes
+- When `false`: Custom notes can be specified
+
+### Using `org_net_term`
+- When `true`: Client inherits organization's default payment terms
+- When `false`: Custom net terms can be specified
+
+## File Upload
+
+### Profile Picture
+- **Allowed formats**: PNG, JPG, JPEG only
+- **Storage**: Uploaded to Amazon S3
+- **Path**: `profiles/` directory
+- **URL**: Full S3 URL returned in response
+- **Security**: Only image files allowed, other formats rejected
+
+## Address Handling
+
+Billing address is automatically copied to mailing address:
+- `billing_address1` → `mailing_address1`
+- `billing_address2` → `mailing_address2`
+- `city` → `mailing_city`
+- `state` → `mailing_state`
+- `zipcode` → `mailing_zip`
+
+## Webhook Integration
+
+After successful client creation, a Zapier webhook is triggered:
+```json
+{
+  "event": "new_client",
+  "payload": {
+    "id": 10,
+    "name": "Acme Corporation",
+    "profile": "https://s3.url/logo.png",
+    "retrieved_at": "2025-11-28 10:30:00"
+  },
+  "criteria": {
+    "team_id": 1
+  }
+}
+```
+
+## Name Sanitization
+
+Client names are automatically sanitized by removing:
+- Single quotes (`'`)
+- Double quotes (`"`)
+- Commas (`,`)
+- Semicolons (`;`)
+- Angle brackets (`<`, `>`)
+- Square brackets (`[`, `]`)
+- Exclamation marks (`!`)
+- Plus signs (`+`)
+- Pipe symbols (`|`)
+
+## Notes
+
+- **Email uniqueness**: Client email must be unique across the entire system
+- **Team assignment**: Client is automatically assigned to your current team
+- **User tracking**: Your user ID is recorded as the creator
+- **Profile storage**: Profile pictures are stored on S3 and returned as full URLs
+- **Address duplication**: Billing address is copied to mailing address
+- **Budget tracking**: Budget settings can be configured per client
+- **Invoice automation**: Various invoice settings can be customized
+- **Webhook triggers**: Zapier webhooks fire on successful creation
+- **Character filtering**: Client names are sanitized for database safety
+
+## Best Practices
+
+- Always provide complete billing address for invoicing
+- Use organization defaults (`org_notes`, `org_net_term`) for consistency
+- Set appropriate budget limits and notification thresholds
+- Upload high-quality logos for professional invoices
+- Verify email uniqueness before submission
+- Configure tax rates according to client location
+- Set realistic payment terms based on client relationship
+
+## Related Endpoints
+
+- [Get Clients](/api-reference/client/list) - List all clients
+- [Get Client](/api-reference/client/get) - Retrieve client details
+- [Update Client](/api-reference/client/update) - Update client information
+- [Delete Client](/api-reference/client/delete) - Remove a client
+- [Get Client Invoices](/api-reference/client/invoices) - View client invoices

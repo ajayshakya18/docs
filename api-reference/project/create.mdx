@@ -1,0 +1,335 @@
+---
+title: 'Create Project'
+openapi: 'POST /api/v3/project/create'
+---
+
+## Overview
+
+Create a new project in your workspace. Projects help organize tasks, track progress, and manage team collaboration. Each project requires a unique name and key within the team.
+
+## Request Body
+
+<ParamField body="project" type="string" required>
+  The name of the project. Must be unique within the team.
+  
+  **Example:** `"Mobile App Development"`
+</ParamField>
+
+<ParamField body="key" type="string" required>
+  A unique project key (typically 2-5 uppercase letters). Used as a prefix for task IDs.
+  
+  **Example:** `"MAD"`
+</ParamField>
+
+<ParamField body="client_id" type="integer" required>
+  The ID of the client associated with this project. If not provided, uses the internal client of the team.
+  
+  **Example:** `10`
+</ParamField>
+
+<ParamField body="description" type="string">
+  Detailed description of the project.
+  
+  **Example:** `"Development of a cross-platform mobile application for iOS and Android"`
+</ParamField>
+
+<ParamField body="team_id" type="integer">
+  The ID of the team this project belongs to. Defaults to the current user's team if not provided.
+  
+  **Example:** `1`
+</ParamField>
+
+
+
+<ParamField body="project_manager" type="array|string">
+  User ID(s) of the project manager(s). Can be a single ID or an array of IDs.
+  
+  **Example:** `[5, 7]` or `"5"`
+</ParamField>
+
+<ParamField body="qa_lead" type="integer">
+  User ID of the QA lead for this project. Defaults to the current user if not provided.
+  
+  **Example:** `8`
+</ParamField>
+
+<ParamField body="users" type="array|string">
+  User ID(s) of team members assigned to this project. Can be a single ID or an array of IDs.
+  
+  **Example:** `[1, 2, 3, 4]` or `"1,2,3"`
+</ParamField>
+
+<ParamField body="groups" type="array|string">
+  Group ID(s) associated with this project. Can be a single ID or an array of IDs.
+  
+  **Example:** `[1, 2]` or `"1,2"`
+</ParamField>
+
+<ParamField body="start_date" type="string">
+  The start date of the project (ISO 8601 format).
+  
+  **Example:** `"2025-12-01T00:00:00Z"`
+</ParamField>
+
+<ParamField body="due_date" type="string">
+  The due date for project completion (ISO 8601 format).
+  
+  **Example:** `"2026-06-30T23:59:59Z"`
+</ParamField>
+
+<ParamField body="billable" type="string" default="yes">
+  Whether the project is billable to the client.
+  
+  **Allowed values:** `"yes"`, `"no"`
+  
+  **Default:** `"yes"`
+</ParamField>
+
+<ParamField body="visible" type="integer">
+  Visibility setting for the project. When provided, sets visiblity to 1.
+  
+  **Example:** `1`
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="integer">
+  The unique identifier of the newly created project.
+</ResponseField>
+
+<ResponseField name="project" type="string">
+  The name of the project.
+</ResponseField>
+
+<ResponseField name="key" type="string">
+  The unique project key.
+</ResponseField>
+
+<ResponseField name="project_description" type="string">
+  Detailed description of the project.
+</ResponseField>
+
+<ResponseField name="team_id" type="integer">
+  The ID of the team this project belongs to.
+</ResponseField>
+
+<ResponseField name="client" type="object">
+  Client information associated with this project.
+  
+  <Expandable title="properties">
+    <ResponseField name="id" type="integer">
+      Client ID.
+    </ResponseField>
+    
+    <ResponseField name="name" type="string">
+      Client name.
+    </ResponseField>
+    
+    <ResponseField name="profile" type="string">
+      URL to the client's profile picture.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="project_manager" type="array">
+  Array of user IDs who are project managers.
+</ResponseField>
+
+<ResponseField name="qa_lead" type="integer">
+  User ID of the QA lead.
+</ResponseField>
+
+<ResponseField name="users" type="array">
+  Array of user IDs assigned to this project.
+</ResponseField>
+
+<ResponseField name="groups" type="array">
+  Array of group IDs associated with this project.
+</ResponseField>
+
+<ResponseField name="watcher" type="array">
+  Array of user IDs watching this project.
+</ResponseField>
+
+<ResponseField name="starting_date" type="string">
+  The start date of the project.
+</ResponseField>
+
+<ResponseField name="due_date" type="string">
+  The due date of the project.
+</ResponseField>
+
+<ResponseField name="isBillable" type="boolean">
+  Whether the project is billable.
+</ResponseField>
+
+<ResponseField name="billable" type="string">
+  Billable status as string ("yes" or "no").
+</ResponseField>
+
+<ResponseField name="visible" type="integer">
+  Visibility setting for the project.
+</ResponseField>
+
+<ResponseField name="visiblity" type="integer">
+  Visibility flag (1 if visibility is set, 0 otherwise).
+</ResponseField>
+
+<ResponseField name="task" type="array">
+  Array of tasks in the project (empty for new projects).
+</ResponseField>
+
+<ResponseField name="completed" type="integer">
+  Number of completed tasks (0 for new projects).
+</ResponseField>
+
+<ResponseField name="user_id" type="integer">
+  User ID of the project creator.
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  The timestamp when the project was created.
+</ResponseField>
+
+<ResponseField name="updated_at" type="string">
+  The timestamp when the project was last updated.
+</ResponseField>
+
+## Example Request
+```bash
+curl --request POST \
+  --url https://app.thareja.ai/api/v3/mobile/project/create \
+  --header 'Authorization: Bearer YOUR_API_TOKEN' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "project": "Mobile App Development",
+    "key": "MAD",
+    "description": "Development of a cross-platform mobile application for iOS and Android",
+    "team_id": 1,
+    "client_id": 10,
+    "project_manager": [5, 7],
+    "qa_lead": 8,
+    "users": [1, 2, 3, 4],
+    "groups": [1, 2],
+    "start_date": "2025-12-01T00:00:00Z",
+    "due_date": "2026-06-30T23:59:59Z",
+    "billable": "yes",
+    "visible": 1
+  }'
+```
+
+## Example Request (JavaScript)
+```javascript
+fetch('https://app.thareja.ai/api/v3/mobile/project/create', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_TOKEN',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    project: "Mobile App Development",
+    key: "MAD",
+    description: "Development of a cross-platform mobile application for iOS and Android",
+    team_id: 1,
+    client_id: 10,
+    project_manager: [5, 7],
+    qa_lead: 8,
+    users: [1, 2, 3, 4],
+    groups: [1, 2],
+    start_date: "2025-12-01T00:00:00Z",
+    due_date: "2026-06-30T23:59:59Z",
+    billable: "yes",
+    visible: 1
+  })
+})
+.then(response => response.json())
+.then(data => console.log(data));
+```
+
+## Example Response
+```json
+{
+  "id": 123,
+  "project": "Mobile App Development",
+  "key": "MAD",
+  "project_description": "Development of a cross-platform mobile application for iOS and Android",
+  "team_id": 1,
+  "client": {
+    "id": 10,
+    "name": "Acme Corporation",
+    "profile": "https://app.thareja.ai/profiles/acme.jpg"
+  },
+  "project_manager": [5, 7],
+  "qa_lead": 8,
+  "users": ["1", "2", "3", "4"],
+  "groups": [1, 2],
+  "watcher": [],
+  "starting_date": "2025-12-01T00:00:00Z",
+  "due_date": "2026-06-30T23:59:59Z",
+  "isBillable": true,
+  "billable": "yes",
+  "visible": 1,
+  "visiblity": 1,
+  "task": [],
+  "completed": 0,
+  "user_id": 1,
+  "created_at": "2025-11-28T10:30:00Z",
+  "updated_at": "2025-11-28T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseExample>
+```json 409 Conflict - Duplicate Project Name
+{
+  "error": "This project name is already exist in your organization"
+}
+```
+```json 409 Conflict - Duplicate Key
+{
+  "error": "This key is already exist in your organization"
+}
+```
+```json 409 Conflict - Empty Key
+{
+  "error": "project key can't be empty!"
+}
+```
+```json 409 Conflict - Empty Project Name
+{
+  "error": "Project name can't be empty!"
+}
+```
+```json 401 Unauthorized
+{
+  "error": 401,
+  "message": "Invalid or missing authentication token"
+}
+```
+```json 400 Bad Request
+{
+  "error": 400,
+  "message": "Invalid request parameters"
+}
+```
+</ResponseExample>
+
+## Notes
+
+- **Unique constraints:** Both project name and key must be unique within the team
+- **Key format:** Project keys are automatically converted to uppercase and special characters are removed
+- **Default team:** If `team_id` is not provided, the current user's team is used
+- **Default client:** If no `client_id` is provided, the internal client of the team is used (or created if it doesn't exist)
+- **Default QA lead:** If not provided, defaults to the current user
+- **Array or string:** Fields like `project_manager`, `users`, and `groups` accept both array format and comma-separated string format
+- **Billable default:** Projects are billable by default unless explicitly set to "no"
+- **Groups:** When groups are provided, the project is automatically added to those groups
+- **Case sensitivity:** Project names are automatically capitalized
+
+## Related Endpoints
+
+- [Get Projects](/api-reference/project/list) - List all projects
+- [Get Project](/api-reference/project/get) - Retrieve project details
+- [Update Project](/api-reference/project/update) - Update project information
+- [Delete Project](/api-reference/project/delete) - Delete a project
