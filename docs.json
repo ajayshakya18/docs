@@ -17,41 +17,18 @@
             "group": "Time tracking API reference",
             "pages": [
               {
+                "group": "Authentication",
+                "pages": [
+                  "api-reference/user/login",
+                  "api-reference/user/register"
+                ]
+              },
+              {
                 "group": "Team Management",
                 "pages": [
                   "api-reference/team/create",
                   "api-reference/team/list"
                 ]
-              },
-              {
-                "group":"Task Management",
-                "pages": [
-    
-                  {
-                    "group": "Tasks",
-                    "pages": [
-                      "api-reference/task/create",
-                      "api-reference/task/updateassignee"
-                    ]
-                  },
-                  {
-                    "group": "Projects",
-                    "pages": [
-                      "api-reference/project/create"
-                      
-
-                    ]
-                  },
-                  {
-                    "group": "Task Comments",
-                    "pages": [
-                      "api-reference/task/comment/add",
-                      "api-reference/task/comment/list"
-                    ]
-                  }
-                  
-                ]
-    
               },
               {
                 "group":"People",
@@ -72,6 +49,37 @@
                   }
                 ]
               },
+              {
+                "group":"Task Management",
+                "pages": [
+    
+                  {
+                    "group": "Tasks",
+                    "pages": [
+                      "api-reference/taskmanager/task/create",
+                      "api-reference/taskmanager/task/updateassignee"
+                    ]
+                  },
+                  {
+                    "group": "Projects",
+                    "pages": [
+                      "api-reference/taskmanager/project/create"
+                      
+
+                    ]
+                  },
+                  {
+                    "group": "Task Comments",
+                    "pages": [
+                      "api-reference/taskmanager/task/comment/add",
+                      "api-reference/taskmanager/task/comment/list"
+                    ]
+                  }
+                  
+                ]
+    
+              },
+              
               {
                 "group": "Time management",
                 "pages": [

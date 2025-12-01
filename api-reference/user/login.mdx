@@ -1,0 +1,317 @@
+---
+title: 'User Login'
+openapi: 'POST /api/v3/user/login'
+---
+
+## Overview
+
+Authenticate a user with email and password. Returns user details, authentication token, and onboarding status flags. The token should be used for all subsequent API requests.
+
+## Request Body
+
+<ParamField body="email" type="string" required>
+  User's email address.
+  
+  **Format:** Valid email address
+  
+  **Example:** `"user@example.com"`
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  User's password.
+  
+  **Example:** `"yourSecurePassword123"`
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="integer">
+  User's unique identifier.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  User's full name.
+</ResponseField>
+
+<ResponseField name="email" type="string">
+  User's email address.
+</ResponseField>
+
+<ResponseField name="profile_photo_url" type="string">
+  URL to user's profile picture.
+</ResponseField>
+
+<ResponseField name="current_team_id" type="integer">
+  ID of the user's current active team.
+</ResponseField>
+
+<ResponseField name="token" type="string">
+  Authentication token for API requests. Use this in the `Authorization: Bearer {token}` header.
+</ResponseField>
+
+<ResponseField name="role" type="string">
+  User's role in the current team.
+  
+  **Possible values:** `"owner"`, `"manager"`, `"member"`, `"client"`
+</ResponseField>
+
+<ResponseField name="isAdmin" type="string">
+  Whether the user has admin privileges in the team.
+  
+  **Possible values:** `"yes"`, `"no"`
+</ResponseField>
+
+<ResponseField name="contact_count" type="integer">
+  Number of contacts the user has.
+</ResponseField>
+
+<ResponseField name="is_first_project_added" type="integer">
+  Onboarding flag: Whether the first project has been added.
+  
+  **Values:** `0` (not added), `1` (added)
+</ResponseField>
+
+<ResponseField name="is_first_task_added" type="integer">
+  Onboarding flag: Whether the first task has been added.
+  
+  **Values:** `0` (not added), `1` (added)
+</ResponseField>
+
+<ResponseField name="is_first_member_invited" type="integer">
+  Onboarding flag: Whether the first team member has been invited.
+  
+  **Values:** `0` (not invited), `1` (invited)
+</ResponseField>
+
+<ResponseField name="timezone" type="string">
+  User's timezone setting.
+</ResponseField>
+
+<ResponseField name="two_factor_confirmed_at" type="string">
+  Timestamp of two-factor authentication confirmation (if enabled).
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  Timestamp when the user account was created.
+</ResponseField>
+
+<ResponseField name="updated_at" type="string">
+  Timestamp when the user account was last updated.
+</ResponseField>
+
+## Example Request
+```bash
+curl --request POST \
+  --url https://app.thareja.ai/api/v3/auth/login \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "email": "user@example.com",
+    "password": "yourSecurePassword123"
+  }'
+```
+
+## Example Request (JavaScript)
+```javascript
+fetch('https://app.thareja.ai/api/v3/user/login', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    email: "user@example.com",
+    password: "yourSecurePassword123"
+  })
+})
+.then(response => response.json())
+.then(data => {
+  // Store the token for future requests
+  localStorage.setItem('authToken', data.token);
+  console.log('Logged in successfully:', data);
+})
+.catch(error => console.error('Login failed:', error));
+```
+
+## Example Response
+```json
+{
+  "id": 1,
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "profile_photo_url": "https://s3.amazonaws.com/bucket/profiles/user-1.jpg",
+  "current_team_id": 5,
+  "token": "1|Ab3dEfGh1Jk2Lm3No4Pq5Rs6Tt7Uv8Wx9Yz0",
+  "role": "owner",
+  "isAdmin": "yes",
+  "contact_count": 15,
+  "is_first_project_added": 1,
+  "is_first_task_added": 1,
+  "is_first_member_invited": 1,
+  "timezone": "America/New_York",
+  "two_factor_confirmed_at": null,
+  "created_at": "2024-01-15T10:30:00Z",
+  "updated_at": "2025-11-28T10:30:00Z"
+}
+```
+
+## Example Response - New Team Owner
+```json
+{
+  "id": 2,
+  "name": "Jane Smith",
+  "email": "jane.smith@example.com",
+  "profile_photo_url": "https://ui-avatars.com/api/?name=Jane+Smith",
+  "current_team_id": 10,
+  "token": "2|Xy9Zw8Vu7Tt6Ss5Rr4Qq3Pp2Oo1Nn0Mm9",
+  "role": "owner",
+  "isAdmin": "yes",
+  "contact_count": 0,
+  "is_first_project_added": 0,
+  "is_first_task_added": 0,
+  "is_first_member_invited": 0,
+  "timezone": "UTC",
+  "two_factor_confirmed_at": null,
+  "created_at": "2025-11-28T09:00:00Z",
+  "updated_at": "2025-11-28T10:30:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseExample>
+```json 403 Forbidden - Invalid Credentials
+{
+  "error": "Incorrect email or password"
+}
+```
+```json 400 Bad Request - Missing Fields
+{
+  "error": 400,
+  "message": "The email field is required."
+}
+```
+```json 400 Bad Request - Invalid Email Format
+{
+  "error": 400,
+  "message": "The email must be a valid email address."
+}
+```
+```json 429 Too Many Requests - Rate Limited
+{
+  "error": 429,
+  "message": "Too many login attempts. Please try again later."
+}
+```
+</ResponseExample>
+
+## Authentication Token Usage
+
+After successful login, use the returned token in all subsequent API requests:
+```bash
+curl --request GET \
+  --url https://app.thareja.ai/api/v3/user/profile \
+  --header 'Authorization: Bearer 1|Ab3dEfGh1Jk2Lm3No4Pq5Rs6Tt7Uv8Wx9Yz0'
+```
+```javascript
+fetch('https://app.thareja.ai/api/v3/user/profile', {
+  headers: {
+    'Authorization': 'Bearer ' + token
+  }
+})
+.then(response => response.json())
+.then(data => console.log(data));
+```
+
+## Onboarding Flags
+
+The response includes three onboarding flags to help guide new users:
+
+### is_first_project_added
+- **`0`**: No projects have been created yet (show project creation prompt)
+- **`1`**: At least one project exists (skip project creation prompt)
+- **Applies to**: Owners and managers only
+
+### is_first_task_added
+- **`0`**: No tasks have been created yet (show task creation prompt)
+- **`1`**: At least one task exists (skip task creation prompt)
+- **Applies to**: Owners and managers only
+
+### is_first_member_invited
+- **`0`**: Team only has the owner (show member invitation prompt)
+- **`1`**: At least one additional member exists (skip invitation prompt)
+- **Applies to**: Owners only
+
+## User Roles
+
+| Role | Description | Permissions |
+|------|-------------|-------------|
+| `owner` | Team owner | Full access to all features and settings |
+| `manager` | Team manager | Can manage projects, tasks, and team members |
+| `member` | Regular member | Can work on assigned tasks and projects |
+| `client` | External client | Limited access to assigned projects only |
+
+## Role-Based Response Differences
+
+### Owner/Manager Response
+Includes onboarding flags for projects and tasks:
+```json
+{
+  "role": "owner",
+  "is_first_project_added": 0,
+  "is_first_task_added": 0,
+  "is_first_member_invited": 0
+}
+```
+
+### Member/Client Response
+Onboarding flags default to 1 (completed):
+```json
+{
+  "role": "member",
+  "is_first_project_added": 1,
+  "is_first_task_added": 1,
+  "is_first_member_invited": 1
+}
+```
+
+## Login Behavior
+
+### On Successful Login:
+1. **Authentication**: Validates email and password
+2. **Login method reset**: Clears any previous login method (OAuth, etc.)
+3. **Token generation**: Creates new authentication token
+4. **Role detection**: Retrieves user's role in current team
+5. **Admin status**: Checks if user has admin privileges
+6. **Contact count**: Calculates number of user contacts
+7. **Onboarding status**: Determines which setup steps are complete
+8. **Response**: Returns complete user profile with token
+
+### Security Features:
+- Passwords are hashed and never returned
+- Tokens are unique per session
+- Failed login attempts can be rate-limited
+- Login method tracking for security audits
+
+
+
+- **Team context**: `current_team_id` determines which team's data to display
+
+
+## Security Considerations
+
+- **HTTPS only**: Always use HTTPS for login requests
+- **Token protection**: Treat tokens like passwords - never expose in URLs or logs
+- **Token expiration**: Implement token expiration and refresh mechanisms
+- **Failed attempts**: Monitor and limit failed login attempts
+- **Password requirements**: Enforce strong password policies during registration
+- **Two-factor auth**: Enable 2FA for enhanced security
+- **Session management**: Properly handle token revocation on logout
+
+## Related Endpoints
+
+- [Register User](/api-reference/auth/register) - Create a new user account
+- [Logout](/api-reference/auth/logout) - Invalidate authentication token
+- [Forgot Password](/api-reference/auth/forgot-password) - Request password reset
+- [Reset Password](/api-reference/auth/reset-password) - Reset user password
+- [Get User Profile](/api-reference/user/profile) - Retrieve current user details
+- [Update Profile](/api-reference/user/update) - Update user information
+- [Refresh Token](/api-reference/auth/refresh) - Get a new authentication token

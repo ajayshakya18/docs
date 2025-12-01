@@ -19,6 +19,130 @@
     }
   ],
   "paths": {
+    "/api/v3/user/login": {
+      "post": {
+        "operationId": "loginUser",
+        "tags": ["Authentication"],
+        "summary": "User login",
+        "description": "Authenticate a user with email and password. Returns user details and authentication token.",
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Missing or invalid fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Incorrect email or password"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests - Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v3/user/register": {
+      "post": {
+        "operationId": "registerUser",
+        "tags": ["Authentication"],
+        "summary": "Register new user",
+        "description": "Create a new user account with automatic organization setup and email verification",
+        "security": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Registration successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "example": {
+                        "email": [
+                          "The email has already been taken."
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v3/mobile/team/createTeam": {
       "post": {
         "tags": ["Teams"],
@@ -720,6 +844,158 @@
   },
   "components": {
     "schemas": {
+      "RegisterRequest": {
+        "required": ["name", "email", "password", "c_password"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "User's full name",
+            "type": "string",
+            "example": "John Doe"
+          },
+          "email": {
+            "description": "User's email address (must be unique)",
+            "type": "string",
+            "format": "email",
+            "example": "john.doe@example.com"
+          },
+          "password": {
+            "description": "User's password",
+            "type": "string",
+            "format": "password",
+            "example": "SecurePassword123!"
+          },
+          "c_password": {
+            "description": "Password confirmation (must match password)",
+            "type": "string",
+            "format": "password",
+            "example": "SecurePassword123!"
+          },
+          "team": {
+            "description": "Optional custom organization details",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "Acme Corporation"
+              },
+              "description": {
+                "type": "string",
+                "example": "Leading software development company"
+              }
+            }
+          },
+          "timezone": {
+            "description": "User's timezone",
+            "type": "string",
+            "example": "America/New_York"
+          },
+          "phone": {
+            "description": "User's phone number",
+            "type": "string",
+            "example": "+1-555-123-4567"
+          }
+        }
+      },
+      "LoginRequest": {
+        "required": ["email", "password"],
+        "type": "object",
+        "properties": {
+          "email": {
+            "description": "User's email address",
+            "type": "string",
+            "format": "email",
+            "example": "user@example.com"
+          },
+          "password": {
+            "description": "User's password",
+            "type": "string",
+            "format": "password",
+            "example": "yourSecurePassword123"
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "john.doe@example.com"
+          },
+          "profile_photo_url": {
+            "type": "string",
+            "format": "uri",
+            "example": "https://s3.amazonaws.com/bucket/profiles/user-1.jpg"
+          },
+          "current_team_id": {
+            "type": "integer",
+            "example": 5
+          },
+          "token": {
+            "type": "string",
+            "example": "1|Ab3dEfGh1Jk2Lm3No4Pq5Rs6Tt7Uv8Wx9Yz0",
+            "description": "Bearer token for API authentication"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["owner", "manager", "member", "client"],
+            "example": "owner"
+          },
+          "isAdmin": {
+            "type": "string",
+            "enum": ["yes", "no"],
+            "example": "yes"
+          },
+          "contact_count": {
+            "type": "integer",
+            "example": 15
+          },
+          "is_first_project_added": {
+            "type": "integer",
+            "enum": [0, 1],
+            "example": 1,
+            "description": "0 = not added, 1 = added"
+          },
+          "is_first_task_added": {
+            "type": "integer",
+            "enum": [0, 1],
+            "example": 1,
+            "description": "0 = not added, 1 = added"
+          },
+          "is_first_member_invited": {
+            "type": "integer",
+            "enum": [0, 1],
+            "example": 1,
+            "description": "0 = not invited, 1 = invited"
+          },
+          "timezone": {
+            "type": "string",
+            "example": "America/New_York"
+          },
+          "two_factor_confirmed_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "NewTeam": {
         "required": [
           "name"
@@ -912,7 +1188,6 @@
           }
         }
       },
-     
       "NewProject": {
         "required": ["project", "key", "client_id"],
         "type": "object",

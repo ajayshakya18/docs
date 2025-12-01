@@ -40,19 +40,19 @@ Send an invitation to a user to join a team. This endpoint allows team owners an
   - If `pay_type` is `"hourly"`: hourly rate
   - If `pay_type` is `"fixed"`: fixed amount per pay period
   
-  **Example:** `50.00`
+  **Example:** `0.00`
 </ParamField>
 
 <ParamField body="bill_rate" type="number" >
   The billable rate for the user (hourly rate charged to clients).
   
-  **Example:** `75.00`
+  **Example:** `0.00`
 </ParamField>
 
 <ParamField body="weekly_limit" type="number">
   Maximum hours per week the user can work.
   
-  **Example:** `40`
+  **Example:** `48`
 </ParamField>
 
 <ParamField body="pay_type" type="string" default="hourly">

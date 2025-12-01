@@ -1,0 +1,145 @@
+---
+title: 'Register User'
+openapi: 'POST /api/v3/user/register'
+---
+
+## Overview
+
+Create a new user account and automatically set up their organization. After registration, a verification email is sent, and the user is automatically logged in with an authentication token.
+
+## Request Body
+
+<ParamField body="name" type="string" required>
+  User's full name. Also used to generate a default organization name.
+  
+  **Example:** `"John Doe"`
+</ParamField>
+
+<ParamField body="email" type="string" required>
+  User's email address. Must be unique in the system.
+  
+  **Format:** Valid email address
+  
+  **Example:** `"john.doe@example.com"`
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  User's password. Should be strong and secure.
+  
+  **Example:** `"SecurePassword123!"`
+</ParamField>
+
+<ParamField body="c_password" type="string" required>
+  Password confirmation. Must match the password field.
+  
+  **Example:** `"SecurePassword123!"`
+</ParamField>
+
+<ParamField body="team" type="object">
+  Optional custom organization/team details. If not provided, defaults to "[Name]'s Organization".
+  
+  <Expandable title="properties">
+    <ParamField body="name" type="string">
+      Custom organization name.
+      
+      **Example:** `"Acme Corporation"`
+    </ParamField>
+    
+    <ParamField body="description" type="string">
+      Organization description.
+      
+      **Example:** `"Leading software development company"`
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="timezone" type="string">
+  User's timezone.
+  
+  **Example:** `"America/New_York"`
+</ParamField>
+
+<ParamField body="phone" type="string">
+  User's phone number.
+  
+  **Example:** `"+1-555-123-4567"`
+</ParamField>
+
+## Response
+
+The response is identical to the login endpoint, containing user details and authentication token.
+
+<ResponseField name="id" type="integer">
+  User's unique identifier.
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  User's full name.
+</ResponseField>
+
+<ResponseField name="email" type="string">
+  User's email address.
+</ResponseField>
+
+<ResponseField name="username" type="string">
+  Automatically generated unique username.
+</ResponseField>
+
+<ResponseField name="profile_photo_url" type="string">
+  URL to user's profile picture (default avatar).
+</ResponseField>
+
+<ResponseField name="current_team_id" type="integer">
+  ID of the newly created organization/team.
+</ResponseField>
+
+<ResponseField name="token" type="string">
+  Authentication token for API requests. Use this in the `Authorization: Bearer {token}` header.
+</ResponseField>
+
+<ResponseField name="role" type="string">
+  User's role (always `"owner"` for new registrations).
+</ResponseField>
+
+<ResponseField name="isAdmin" type="string">
+  Admin status (always `"yes"` for new registrations).
+</ResponseField>
+
+<ResponseField name="contact_count" type="integer">
+  Number of contacts (0 for new users).
+</ResponseField>
+
+<ResponseField name="is_first_project_added" type="integer">
+  Onboarding flag: Whether the first project has been added (0 for new users).
+</ResponseField>
+
+<ResponseField name="is_first_task_added" type="integer">
+  Onboarding flag: Whether the first task has been added (0 for new users).
+</ResponseField>
+
+<ResponseField name="is_first_member_invited" type="integer">
+  Onboarding flag: Whether the first team member has been invited (0 for new users).
+</ResponseField>
+
+<ResponseField name="checkapp" type="string">
+  App identifier (set to "tracker").
+</ResponseField>
+
+<ResponseField name="maxSpeedLimit" type="integer">
+  Maximum speed limit setting (80).
+</ResponseField>
+
+<ResponseField name="email_verified_at" type="string">
+  Email verification timestamp (null until verified).
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  Timestamp when the user account was created.
+</ResponseField>
+
+<ResponseField name="updated_at" type="string">
+  Timestamp when the user account was last updated.
+</ResponseField>
+
+## Example Request - Basic Registration
+```bash
